@@ -1,0 +1,47 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container">
+
+   <h1 class="my-4">
+       {{ movie.title }}
+   </h1>
+
+
+   <div class="row">
+     <div class="col-md-8">
+     <img class="card-img-top" src="{{ backdrop }}" alt="">
+     </div>
+     <div class="col-md-4">
+         <h3>{{ movie.tagline }}</h3>
+       <p>
+           {{ movie.overview}}
+       </p>
+       <dl>
+           <dt>Budget</dt>
+           <dd>{{ movie.budget }}</dd>
+           <dt>Genre</dt>
+           <dd>{% for genre in movie.genres %}{{ genre.name }}, {% endfor %}</dd>
+         </dl>
+     </div>
+   </div>
+    <h3 class="my-4">Cast</h3>
+    <div class="d-flex">
+        {% for actor in cast %}
+            {% if loop.index <= 6 %}
+                <a href="#" class="mr-3">
+                    <figure class="figure">
+                        {% if actor.profile_path %}
+                            <img src="{{ tbdb_image_url(actor.profile_path, 'w185') }}" class="figure-img img-fluid rounded" alt="{{ actor.name }}">
+                        {% else %}
+                            <img src="https://placehold.it/185x278?text={{ actor.name }}" class="figure-img img-fluid rounded" alt="{{ actor.name }}">
+                        {% endif %}
+                        <figcaption class="figure-caption">{{ actor.name }} as {{ actor.character }}</figcaption>
+                    </figure>
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
