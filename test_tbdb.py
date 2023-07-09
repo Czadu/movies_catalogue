@@ -1,6 +1,12 @@
 import pytest
+from main import app as tbdb_app
 from unittest.mock import Mock
 from tbdb_client import get_single_movie, get_poster_url, get_single_movie_cast, tbdb_image_url, API_TOKEN
+
+
+@pytest.fixture
+def app():
+    return tbdb_app
 
 
 def test_get_single_movie_cast(monkeypatch):
@@ -47,6 +53,20 @@ def test_tbdb_image_url():
     expected_url = "https://image.tmdb.org/t/p/w500/test_path"
     
     assert result == expected_url
+
+
+@pytest.mark.parametrize("list_type", ["now_playing", "top_rated", "upcoming", "popular"])
+def test_homepage(monkeypatch, app, list_type):
+    api_mock = Mock(return_value={'results': []})
+    monkeypatch.setattr("tbdb_client.call_tbdb_api", api_mock)
+
+    with app.test_client() as client:
+        response = client.get(f'/?list_type={list_type}')
+        assert response.status_code == 200
+        api_mock.assert_called_once_with(f'movie/{list_type}')
+
+
+
 
 
 if __name__ == '__main__':
